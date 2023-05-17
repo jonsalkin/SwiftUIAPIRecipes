@@ -79,19 +79,19 @@ struct ContentView_Previews: PreviewProvider {
 
 
 
-
-//MARK: - Test Images
-struct URLImageTestView: View {
-    let testImageURL = "https://www.themealdb.com//images//media//meals//adxcbq1619787919.jpg" // Replace with an actual test image URL
-
-    var body: some View {
-        URLImage(urlString: testImageURL)
-            .frame(width: 200, height: 200)
-    }
-}
-
-struct URLImageTestView_Previews: PreviewProvider {
-    static var previews: some View {
-        URLImageTestView()
-    }
-}
+//
+////MARK: - Test Images
+//struct URLImageTestView: View {
+//    let testImageURL = "https://www.themealdb.com//images//media//meals//adxcbq1619787919.jpg" // Replace with an actual test image URL
+//
+//    var body: some View {
+//        URLImage(urlString: testImageURL)
+//            .frame(width: 200, height: 200)
+//    }
+//}
+//
+//struct URLImageTestView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        URLImageTestView()
+//    }
+//}
