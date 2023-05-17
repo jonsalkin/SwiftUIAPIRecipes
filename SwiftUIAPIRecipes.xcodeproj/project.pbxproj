@@ -12,6 +12,7 @@
 		2C5D59682A146FDA00D8410A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C5D59672A146FDA00D8410A /* Assets.xcassets */; };
 		2C5D596B2A146FDA00D8410A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C5D596A2A146FDA00D8410A /* Preview Assets.xcassets */; };
 		2C5D59722A14703E00D8410A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5D59712A14703E00D8410A /* ViewModel.swift */; };
+		2C5D59742A149E4700D8410A /* RecipeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5D59732A149E4700D8410A /* RecipeDetails.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		2C5D59672A146FDA00D8410A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C5D596A2A146FDA00D8410A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2C5D59712A14703E00D8410A /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		2C5D59732A149E4700D8410A /* RecipeDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetails.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 				2C5D59672A146FDA00D8410A /* Assets.xcassets */,
 				2C5D59692A146FDA00D8410A /* Preview Content */,
 				2C5D59712A14703E00D8410A /* ViewModel.swift */,
+				2C5D59732A149E4700D8410A /* RecipeDetails.swift */,
 			);
 			path = SwiftUIAPIRecipes;
 			sourceTree = "<group>";
@@ -140,6 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C5D59742A149E4700D8410A /* RecipeDetails.swift in Sources */,
 				2C5D59662A146FD400D8410A /* ContentView.swift in Sources */,
 				2C5D59722A14703E00D8410A /* ViewModel.swift in Sources */,
 				2C5D59642A146FD400D8410A /* SwiftUIAPIRecipesApp.swift in Sources */,

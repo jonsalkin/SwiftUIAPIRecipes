@@ -22,7 +22,7 @@ struct URLImage: View {
                 .background(Color.gray)
         }
         else {
-            Image(systemName: "video")
+            Image(systemName: "photo")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 130, height: 70)
@@ -47,6 +47,7 @@ struct URLImage: View {
 
 struct ContentView: View {
     @StateObject var viewModel = ViewModel()
+    @State private var selectedRecipe: Recipe?
     
     var body: some View {
         NavigationView {
@@ -65,18 +66,69 @@ struct ContentView: View {
             .onAppear {
                 viewModel.fetch()
             }
+            
+            .sheet(item: $selectedRecipe) { recipe in
+                RecipeDetailView(recipe: recipe)
+            }
+            
+        }
+    }
+    
+    struct ContentView_Previews: PreviewProvider {
+        static var previews: some View {
+            ContentView()
+        }
+    }
+    
+    
+    struct RecipeDetailView: View {
+        let recipe: Recipe
+        
+        var body: some View {
+            VStack {
+                URLImage(urlString: recipe.strMealThumb)
+                
+                Text(recipe.strMeal)
+                    .font(.title)
+                    .bold()
+                    .padding()
+                
+                // Fetch recipe details using the recipe ID
+                RecipeDetailsView(recipeID: recipe.idMeal)
+            }
+        }
+    }
+    
+    
+    struct RecipeDetailsView: View {
+        let recipeID: String
+        @State private var recipeDetails: RecipeDetails?
+        
+        var body: some View {
+            VStack {
+                if let recipeDetails = recipeDetails {
+                    Text(recipeDetails.strInstructions)
+                        .padding()
+                } else {
+                    ProgressView()
+                        .onAppear {
+                            fetchRecipeDetails()
+                        }
+                }
+            }
+        }
+        
+        private func fetchRecipeDetails() {
+            guard let url = URL(string: "https://themealdb.com/api/json/v1/1/lookup.php?i=\(recipeID)") else {
+                return
+            }
+            
+
         }
         
     }
+    
 }
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
-
 
 
 //

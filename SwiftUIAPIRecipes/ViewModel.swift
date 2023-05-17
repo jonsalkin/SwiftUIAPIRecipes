@@ -8,10 +8,12 @@
 import Foundation
 import SwiftUI
 
-struct Recipe: Hashable, Codable {
+struct Recipe: Hashable, Codable, Identifiable {
     let idMeal: String
     let strMeal: String
     let strMealThumb: String
+    
+    var id: String { idMeal } // Use idMeal as the identifier
 }
 
 class ViewModel: ObservableObject {
