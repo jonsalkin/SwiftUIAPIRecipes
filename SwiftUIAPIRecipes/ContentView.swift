@@ -53,13 +53,15 @@ struct ContentView: View {
         NavigationView {
             List {
                 ForEach(viewModel.recipes, id: \.idMeal) { recipe in
-                    HStack {
-                        URLImage(urlString: recipe.strMealThumb)
-                        
-                        Text(recipe.strMeal)
-                            .bold()
+                    NavigationLink(destination: RecipeDetailsView(recipeID: recipe.idMeal)) {
+                        HStack {
+                            URLImage(urlString: recipe.strMealThumb)
+                            
+                            Text(recipe.strMeal)
+                                .bold()
+                        }
+                        .padding(3)
                     }
-                    .padding(3)
                 }
             }
             .navigationTitle("Recipes")
@@ -99,6 +101,10 @@ struct ContentView: View {
         }
     }
     
+    struct RecipeDetailsResponse: Codable {
+        let meals: [RecipeDetails]
+    }
+
     
     struct RecipeDetailsView: View {
         let recipeID: String
@@ -123,6 +129,25 @@ struct ContentView: View {
                 return
             }
             
+            let task = URLSession.shared.dataTask(with: url) { data, _, error in
+                guard let data = data, error == nil else {
+                    return
+                }
+                
+                do {
+                    let decoder = JSONDecoder()
+                    let response = try decoder.decode(RecipeDetailsResponse.self, from: data)
+                    if let recipeDetails = response.meals.first {
+                        DispatchQueue.main.async {
+                            self.recipeDetails = recipeDetails
+                        }
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+            
+            task.resume()
 
         }
         
@@ -130,20 +155,3 @@ struct ContentView: View {
     
 }
 
-
-//
-////MARK: - Test Images
-//struct URLImageTestView: View {
-//    let testImageURL = "https://www.themealdb.com//images//media//meals//adxcbq1619787919.jpg" // Replace with an actual test image URL
-//
-//    var body: some View {
-//        URLImage(urlString: testImageURL)
-//            .frame(width: 200, height: 200)
-//    }
-//}
-//
-//struct URLImageTestView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        URLImageTestView()
-//    }
-//}
