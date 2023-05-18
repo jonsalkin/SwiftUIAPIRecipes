@@ -8,42 +8,7 @@
 
 import SwiftUI
 
-struct URLImage: View {
-    let urlString: String
-    
-    @State var data: Data?
-    
-    var body: some View {
-        if let data = data, let uiimage = UIImage(data: data) {
-            Image(uiImage: uiimage)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 130, height: 70)
-                .background(Color.gray)
-        }
-        else {
-            Image(systemName: "photo")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 130, height: 70)
-                .background(Color.gray)
-                .onAppear {
-                    if let url = URL(string: urlString) {
-                        fetchData(from: url)
-                    }
-                }
-        }
-    }
-    
-    private func fetchData(from url: URL) {
-        
-        let task = URLSession.shared.dataTask(with: url) { data, _, _ in
-            self.data = data
-        }
-        task.resume()
-    }
-    
-}
+import SwiftUI
 
 struct ContentView: View {
     @StateObject var viewModel = ViewModel()
@@ -51,107 +16,36 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(viewModel.recipes, id: \.idMeal) { recipe in
-                    NavigationLink(destination: RecipeDetailsView(recipeID: recipe.idMeal)) {
+            List(viewModel.recipes, id: \.idMeal) { recipe in
+                NavigationLink(
+                    destination: RecipeDetailsSwiftUIView(recipeID: recipe.idMeal),
+                    tag: recipe,
+                    selection: $selectedRecipe,
+                    label: {
                         HStack {
                             URLImage(urlString: recipe.strMealThumb)
-                            
                             Text(recipe.strMeal)
                                 .bold()
                         }
                         .padding(3)
                     }
+                )
+                .onTapGesture {
+                    selectedRecipe = recipe
+                    viewModel.fetchRecipeDetails(recipeID: recipe.idMeal)
                 }
             }
             .navigationTitle("Recipes")
-            .onAppear {
-                viewModel.fetch()
-            }
-            
-            .sheet(item: $selectedRecipe) { recipe in
-                RecipeDetailView(recipe: recipe)
-            }
-            
+        }
+        .onAppear {
+            viewModel.fetch()
         }
     }
-    
-    struct ContentView_Previews: PreviewProvider {
-        static var previews: some View {
-            ContentView()
-        }
-    }
-    
-    
-    struct RecipeDetailView: View {
-        let recipe: Recipe
-        
-        var body: some View {
-            VStack {
-                URLImage(urlString: recipe.strMealThumb)
-                
-                Text(recipe.strMeal)
-                    .font(.title)
-                    .bold()
-                    .padding()
-                
-                // Fetch recipe details using the recipe ID
-                RecipeDetailsView(recipeID: recipe.idMeal)
-            }
-        }
-    }
-    
-    struct RecipeDetailsResponse: Codable {
-        let meals: [RecipeDetails]
-    }
-
-    
-    struct RecipeDetailsView: View {
-        let recipeID: String
-        @State private var recipeDetails: RecipeDetails?
-        
-        var body: some View {
-            VStack {
-                if let recipeDetails = recipeDetails {
-                    Text(recipeDetails.strInstructions)
-                        .padding()
-                } else {
-                    ProgressView()
-                        .onAppear {
-                            fetchRecipeDetails()
-                        }
-                }
-            }
-        }
-        
-        private func fetchRecipeDetails() {
-            guard let url = URL(string: "https://themealdb.com/api/json/v1/1/lookup.php?i=\(recipeID)") else {
-                return
-            }
-            
-            let task = URLSession.shared.dataTask(with: url) { data, _, error in
-                guard let data = data, error == nil else {
-                    return
-                }
-                
-                do {
-                    let decoder = JSONDecoder()
-                    let response = try decoder.decode(RecipeDetailsResponse.self, from: data)
-                    if let recipeDetails = response.meals.first {
-                        DispatchQueue.main.async {
-                            self.recipeDetails = recipeDetails
-                        }
-                    }
-                } catch {
-                    print(error)
-                }
-            }
-            
-            task.resume()
-
-        }
-        
-    }
-    
 }
 
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}

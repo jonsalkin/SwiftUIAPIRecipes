@@ -13,39 +13,36 @@ struct Recipe: Hashable, Codable, Identifiable {
     let strMeal: String
     let strMealThumb: String
     
-    var id: String { idMeal } // Use idMeal as the identifier
+    var id: String { idMeal }
+}
+
+struct RecipeListResponse: Codable {
+    let meals: [Recipe]
+}
+
+struct RecipeDetailsResponseVM: Codable {
+    let meals: [RecipeDetails]
 }
 
 class ViewModel: ObservableObject {
     @Published var recipes: [Recipe] = []
+    @Published var recipeDetails: RecipeDetails?
     
     func fetch() {
         guard let url = URL(string: "https://themealdb.com/api/json/v1/1/filter.php?c=Dessert") else {
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) {[weak self] data, _, error in
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
             guard let data = data, error == nil else {
                 return
             }
             
-            //Convert to JSON
             do {
-                let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let meals = json?["meals"] as? [[String: Any]] {
-                    let recipes = meals.compactMap { (mealDict: [String: Any]) -> Recipe? in
-                        guard let idMeal = mealDict["idMeal"] as? String,
-                              let strMeal = mealDict["strMeal"] as? String,
-                              let strMealThumb = mealDict["strMealThumb"] as? String else {
-                            return nil
-                        }
-                        
-                        return Recipe(idMeal: idMeal, strMeal: strMeal, strMealThumb: strMealThumb)
-                    }
-                    
-                    DispatchQueue.main.async {
-                        self?.recipes = recipes
-                    }
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(RecipeListResponse.self, from: data)
+                DispatchQueue.main.async {
+                    self?.recipes = response.meals
                 }
             } catch {
                 print(error)
@@ -54,6 +51,31 @@ class ViewModel: ObservableObject {
         
         task.resume()
     }
+    
+    func fetchRecipeDetails(recipeID: String) {
+        guard let url = URL(string: "https://themealdb.com/api/json/v1/1/lookup.php?i=\(recipeID)") else {
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) {[weak self] data, _, error in
+            guard let data = data, error == nil else {
+                return
+            }
+            
+                do {
+                    let decoder = JSONDecoder()
+                    let response = try decoder.decode(RecipeDetailsResponseVM.self, from: data)
+                    if let recipeDetails = response.meals.first {
+                        DispatchQueue.main.async {
+                            self?.recipeDetails = recipeDetails
+                        }
+                    }
+                } catch {
+                    print("Error decoding recipe details: \(error)")
+                }
+            }
+            
+            task.resume()
+        }
 }
-
 
