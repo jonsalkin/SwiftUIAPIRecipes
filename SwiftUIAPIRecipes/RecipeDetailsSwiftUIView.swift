@@ -76,44 +76,61 @@ struct RecipeDetailsView: View {
                                 .aspectRatio(contentMode: .fit)
                         }
                     }
+                    
                     .frame(width: UIScreen.main.bounds.width, height: 300)
                     .clipped()
                     
-                    Text(recipeDetails.strMeal)
-                        .font(.title)
-                        .padding(.vertical)
-                    
-                    Text("Category: \(recipeDetails.strCategory)")
-                        .font(.subheadline)
-                        .padding(.bottom, 4)
-                    
-                    Text("Area: \(recipeDetails.strArea)")
-                        .font(.subheadline)
-                        .padding(.bottom, 4)
-                    
-                    Text("Instructions:")
-                        .font(.headline)
-                        .padding(.bottom, 4)
-                    
-                    Text(recipeDetails.strInstructions)
-                        .font(.body)
-                        .lineLimit(nil)
-                        .padding(.bottom)
-                    
-                    if let videoId = extractYouTubeVideoId(from: recipeDetails.strYoutube),
-                       let youtubeURL = URL(string: "https://www.youtube.com/watch?v=\(videoId)") {
-                        WebView(url: youtubeURL)
-                            .frame(height: 300) // Adjust the height of the WebView
+                    VStack(alignment: .leading) {
+                        Text(recipeDetails.strMeal)
+                            .font(.title)
+                            .padding(.vertical)
+                        
+                        Text("Category: \(recipeDetails.strCategory)")
+                            .font(.subheadline)
+                            .padding(.bottom, 4)
+                        
+                        Text("Area: \(recipeDetails.strArea)")
+                            .font(.subheadline)
+                            .padding(.bottom, 4)
+                        
+                        Text("Instructions:")
+                            .font(.headline)
+                            .padding(.bottom, 4)
+                        
+                        Text(recipeDetails.strInstructions)
+                            .font(.body)
+                            .fixedSize(horizontal: false, vertical: true) // Allow multiline text
+                            .padding(.bottom)
+                        
+                        if let ingredients = recipeDetails.getIngredients(),
+                           let measures = recipeDetails.getMeasures() {
+                            Text("Ingredients:")
+                                .font(.headline)
+                                .padding(.bottom, 4)
+                            
+                            ForEach(Array(zip(ingredients, measures)), id: \.0) { ingredient, measure in
+                                Text("\(measure) \(ingredient)")
+                                    .font(.body)
+                                    .padding(.bottom, 4)
+                            }
+                        }
                     }
-                } else {
+                    .padding()
+                    
+                    if let url = URL(string: recipeDetails.strYoutube) {
+                        WebView(url: url)
+                            .frame(height: 300)
+                            .padding(.horizontal)
+                    }
+                }
+                else {
                     ProgressView()
                 }
             }
-            .padding()
         }
     }
+    
 }
-
 private func extractYouTubeVideoId(from url: String) -> String? {
         guard let youtubeURL = URL(string: url) else {
             return nil
@@ -156,3 +173,18 @@ extension URL {
         return parameters
     }
 }
+
+
+    extension RecipeDetails {
+        func getIngredients() -> [String]? {
+            let ingredients = [strIngredient1, strIngredient2, strIngredient3, strIngredient4, strIngredient5, strIngredient6, strIngredient7, strIngredient8, strIngredient9, strIngredient10, strIngredient11, strIngredient12, strIngredient13, strIngredient14, strIngredient15, strIngredient16, strIngredient17, strIngredient18, strIngredient19, strIngredient20]
+            
+            return ingredients.compactMap { $0 }
+        }
+        
+        func getMeasures() -> [String]? {
+            let measures = [strMeasure1, strMeasure2, strMeasure3, strMeasure4, strMeasure5, strMeasure6, strMeasure7, strMeasure8, strMeasure9, strMeasure10, strMeasure11, strMeasure12, strMeasure13, strMeasure14, strMeasure15, strMeasure16, strMeasure17, strMeasure18, strMeasure19, strMeasure20]
+            
+            return measures.compactMap { $0 }
+        }
+    }

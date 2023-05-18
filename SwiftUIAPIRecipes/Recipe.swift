@@ -8,6 +8,7 @@
 import Foundation
 
 struct RecipeDetails: Codable {
+    
     let idMeal: String
     let strMeal: String
     let strCategory: String
@@ -61,6 +62,34 @@ struct RecipeDetails: Codable {
     let strCreativeCommonsConfirmed: String?
     let dateModified: String?
     // Add more properties as needed
+    
+    var ingredients: [String] {
+        var ingredients: [String] = []
+        let mirror = Mirror(reflecting: self)
+        for index in 1...20 {
+            let ingredientKey = "strIngredient\(index)"
+            if let ingredient = mirror.children.first(where: { $0.label == ingredientKey })?.value as? String {
+                if !ingredient.isEmpty {
+                    ingredients.append(ingredient)
+                }
+            }
+        }
+        return ingredients
+    }
+
+    var measures: [String] {
+        var measures: [String] = []
+        let mirror = Mirror(reflecting: self)
+        for index in 1...20 {
+            let measureKey = "strMeasure\(index)"
+            if let measure = mirror.children.first(where: { $0.label == measureKey })?.value as? String {
+                if !measure.isEmpty {
+                    measures.append(measure)
+                }
+            }
+        }
+        return measures
+    }
     
     enum CodingKeys: String, CodingKey {
         case idMeal
