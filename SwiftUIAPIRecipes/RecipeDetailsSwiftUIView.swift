@@ -119,8 +119,9 @@ struct RecipeDetailsView: View {
                     
                     if let url = URL(string: recipeDetails.strYoutube) {
                         WebView(url: url)
-                            .frame(height: 300)
+                            .frame(height: 350)
                             .padding(.horizontal)
+                            .padding(.top, 2) // Adjust the top padding to reduce space
                     }
                 }
                 else {
